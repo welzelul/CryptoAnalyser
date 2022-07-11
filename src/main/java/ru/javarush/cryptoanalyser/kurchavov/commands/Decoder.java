@@ -2,28 +2,28 @@ package ru.javarush.cryptoanalyser.kurchavov.commands;
 
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
-import ru.javarush.cryptoanalyser.kurchavov.exceptions.ApplicationException;
 import ru.javarush.cryptoanalyser.kurchavov.util.PathFinder;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
-public class Decoder implements Action{
+import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
+import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.writeFile;
+
+public class Decoder extends Action implements Executer {
     @Override
-    public Result execute(String[] parameters) {
-        //TODO need del logic;
-        String sourceFile = parameters[0];
-        String resultFile = parameters[1];
-        Path path = Path.of(PathFinder.getRoot() + sourceFile);
-        try {
-            List<String> strings = Files.readAllLines(path);
+    public Result execute(String[] parameters) throws IOException {
+        super.initParameters(parameters);
+        resultString = getResultString();
+        return writeFile(resultPath, resultString);
+    }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new Result(ResultCode.OK, "read all bytes " + path);
-//        throw new UnsupportedOperationException();
+    @Override
+    public char getResultChar(char ch) {
+        int indexFromAlphabet = currentABC.indexOf(ch);
+        if (indexFromAlphabet == -1)
+            return ch;
+        return ABC.charAt(indexFromAlphabet);
     }
 }

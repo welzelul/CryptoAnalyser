@@ -19,6 +19,10 @@ public class Result {
                 ", message='" + message;
     }
 
+    public Result(ResultCode resultCode) {
+        this.resultCode = resultCode;
+        this.message = "";
+    }
     public Result(ResultCode resultCode, String message) {
         this.resultCode = resultCode;
         this.message = message;

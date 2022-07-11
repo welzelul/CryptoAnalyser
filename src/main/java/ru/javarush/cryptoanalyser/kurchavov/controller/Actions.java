@@ -7,13 +7,13 @@ public enum Actions {
     DECODE(new Decoder()),
     BROOTFORCE(new BrootForce()),
     ANALYSE(new Analyse());
-    private final Action action;
+    private final Executer action;
 
-    Actions(Action action) {
+    Actions(Executer action) {
         this.action = action;
     }
 
-    public static Action find(String command) {
+    public static Executer find(String command) {
         return Actions.valueOf(command.toUpperCase()).action;
     }
 }
