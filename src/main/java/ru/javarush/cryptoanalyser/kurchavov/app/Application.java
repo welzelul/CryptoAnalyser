@@ -1,6 +1,6 @@
 package ru.javarush.cryptoanalyser.kurchavov.app;
 
-import ru.javarush.cryptoanalyser.kurchavov.Result;
+import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import ru.javarush.cryptoanalyser.kurchavov.controller.MainController;
 
 import java.util.Arrays;
