@@ -3,12 +3,7 @@ package ru.javarush.cryptoanalyser.kurchavov.commands;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Values;
-import ru.javarush.cryptoanalyser.kurchavov.util.PathFinder;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -18,11 +13,16 @@ import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.scanner;
 
 public class BrootForce extends Action implements Executer {
+    private final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
+            2,  "resultString");
+    public BrootForce() {
+        super();
+    }
 
     @Override
-    public Result execute(String[] parameters) {
+    public Result execute(String[] parameters) throws IllegalAccessException {
         //TODO need del logic;
-        super.initParameters(parameters);
+        initParameters(parameters);
 
         HashMap<Integer, Values> map = this.getRegularity();
         OptionalInt maxCountOpt = map.values().stream().
@@ -61,7 +61,6 @@ public class BrootForce extends Action implements Executer {
                 }
             }
         }
-
         return new Result(ResultCode.OK, "Done");
     }
 

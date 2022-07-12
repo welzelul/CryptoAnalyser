@@ -1,21 +1,22 @@
 package ru.javarush.cryptoanalyser.kurchavov.commands;
 
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
-import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
-import ru.javarush.cryptoanalyser.kurchavov.util.PathFinder;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Map;
 
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.writeFile;
 
 public class Decoder extends Action implements Executer {
+    private final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
+            2,  "resultString",
+            3, "key");
+
     @Override
-    public Result execute(String[] parameters) throws IOException {
-        super.initParameters(parameters);
-        resultString = getResultString();
+    public Result execute(String[] parameters) throws IOException, IllegalAccessException {
+        initParameters(parameters);
+        resultString = buildResultString();
         return writeFile(resultPath, resultString);
     }
 

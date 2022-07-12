@@ -21,4 +21,23 @@ public class InputOutput {
         return new Result(ResultCode.OK, "Success");
     }
 
+    public static int enterInt(String subject) {
+        int key = 0;
+        System.out.println("Enter " + subject + " (number): ");
+        String s;
+        while(!(s = scanner.nextLine()).equals("")){
+            try {
+                key = Integer.parseInt(s);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Wrong " + subject + ". Retry please again");
+            }
+        }
+        return key;
+    }
+    public static String questionSaveStringYesNo() {
+        System.out.println("Save finding string?(y/n):");
+        return scanner.nextLine();
+    }
+
 }

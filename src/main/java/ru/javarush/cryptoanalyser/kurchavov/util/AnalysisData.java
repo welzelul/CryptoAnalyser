@@ -1,6 +1,10 @@
 package ru.javarush.cryptoanalyser.kurchavov.util;
 
 
-public class AnalysisData {
+import ru.javarush.cryptoanalyser.kurchavov.entity.Values;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class AnalysisData {
 }
