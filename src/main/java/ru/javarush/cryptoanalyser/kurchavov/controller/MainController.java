@@ -6,7 +6,7 @@ import ru.javarush.cryptoanalyser.kurchavov.commands.Executer;
 import java.io.IOException;
 
 public class MainController {
-    public Result execute(String command, String[] parameters) throws IOException {
+    public Result execute(String command, String[] parameters) throws IOException, IllegalAccessException {
         Executer action = Actions.find(command);
         Result result = action.execute(parameters);
         throw new UnsupportedOperationException();

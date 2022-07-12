@@ -13,7 +13,7 @@ public class Application {
         this.mainController = mainController;
     }
 
-    public Result run(String[] args) throws IOException {
+    public Result run(String[] args) throws IOException, IllegalAccessException {
         String command = args[0];
         String[] parameters = Arrays.copyOfRange(args, 1, args.length);
         return mainController.execute(command, parameters);

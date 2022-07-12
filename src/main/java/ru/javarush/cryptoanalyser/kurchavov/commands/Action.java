@@ -3,7 +3,7 @@ package ru.javarush.cryptoanalyser.kurchavov.commands;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Values;
-import ru.javarush.cryptoanalyser.kurchavov.util.PathFinder;
+import ru.javarush.cryptoanalyser.kurchavov.util.InputOutput;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -177,9 +177,9 @@ public class Action {
             if (result != null && result.get() != null)
                 return result.get();
         if (sourceString != null)
-            sourcePath = Path.of(PathFinder.getRoot() + sourceString);
+            sourcePath = Path.of(InputOutput.getRoot() + sourceString);
         if (resultString != null)
-            resultPath = Path.of(PathFinder.getRoot() + resultString);
+            resultPath = Path.of(InputOutput.getRoot() + resultString);
         buildABC();
 
         try {

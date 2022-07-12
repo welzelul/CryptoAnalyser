@@ -7,7 +7,7 @@ import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import java.io.IOException;
 
 public class Runner {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, IllegalAccessException {
         MainController mainController = new MainController();
         Application application = new Application(mainController);
         Result result = application.run(args);
