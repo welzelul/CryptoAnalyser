@@ -32,6 +32,7 @@ public class Encoder extends Action {
         if (initResult != null && initResult.getResultCode() == ResultCode.ERROR)
             return initResult;
         String resultString = buildResultString();
+        setResultString(resultString);
         return writeFile(this.getResultPath(), resultString);
     }
 

@@ -1,6 +1,7 @@
 package ru.javarush.cryptoanalyser.kurchavov.commands;
 
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
+import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,8 +26,13 @@ public class Decoder extends Action {
     }
     @Override
     public Result execute(String[] parameters) throws IllegalAccessException {
-        initParameters(parameters);
+        Result initResult = null;
+        if (!isInitialized())
+            initResult = initParameters(parameters);
+        if (initResult != null && initResult.getResultCode() == ResultCode.ERROR)
+            return initResult;
         String resultString = buildResultString();
+        setResultString(resultString);
         return writeFile(this.getResultPath(), resultString);
     }
 

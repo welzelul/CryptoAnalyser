@@ -148,9 +148,15 @@ public abstract class Action{
         return resultString;
     }
 
-    private String getSourceString() {
+    public void readSourceFile() throws IOException {
+        if (!sourcePathAsString.isEmpty()){
+            sourceString = String.valueOf(Files.readAllLines(sourcePath));
+        }
+    }
+    public String getSourceString() {
         return sourceString;
     }
+
 
     public HashMap<Integer, Values> getRegularity() {
         return getRegularity(this);
@@ -193,6 +199,25 @@ public abstract class Action{
                 collect(Collectors.toMap(Map.Entry::getKey,
                         Map.Entry::getValue)); // all options where count characters more finalMostTimes - 1
     }
+
+    public HashMap<Character, Double> MapOfStatisticsLetters() {
+        HashMap<Character, Double> temp = new HashMap<>();
+        String sourceString = getSourceString();
+        int totalLetters = sourceString.length();
+        List<Character> regs = Arrays.asList('(', ')', '[', ']', '{', '{', '\\', '^','$','|','?', '*', '+', '.', '<', '>', '-', '=', '!');
+
+        Set<Character> chars = sourceString.toLowerCase().
+                chars().mapToObj(e -> (char)e).
+                collect(Collectors.toSet());
+        chars.forEach( currectCh ->{
+            String toReplace = (regs.contains(currectCh) ?"\\\\":"") + currectCh;
+            String tempS = sourceString.replaceAll(toReplace, "");
+            Double percentLetter = (double) ((action.getSourceString().length() - tempS.length()) / totalLetters);
+            temp.put(currectCh, percentLetter);
+        });
+        return temp;
+    }
+
     protected Result initParameters(String[] takedParameters) throws IllegalAccessException {
         if (takedParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");

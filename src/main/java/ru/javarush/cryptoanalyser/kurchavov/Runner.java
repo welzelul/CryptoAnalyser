@@ -25,7 +25,7 @@ public class Runner {
                 echoResult(new Result(ResultCode.ERROR,"empty parameters"));
         }
 
-        if (args!=null) {
+        if (args.length!=0) {
             Result result = application.run(args);
             echoResult(result);
         }

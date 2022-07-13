@@ -49,6 +49,7 @@ public class BrootForce extends Action{
         } else if(filtedMap.size()>1){
             int key = filtedMap.keySet().stream().findFirst().get(); //
             this.setResultString(filtedMap.get(key).getResultString());
+            //for saving.
 //            filtedMap.forEach((k,v) -> {
 //                String result = v.getResultString();
 //                System.out.println("\t Ключ: " + k + ". " + result.substring(0,
