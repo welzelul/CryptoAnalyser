@@ -15,21 +15,33 @@ import java.util.stream.Collectors;
 
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 
-public class Action {
-    String sourceString;
-    String resultString;
-    int key;
-    Path sourcePath;
-    Path resultPath;
-    Action action;
-    String currentABC;
-
-    private Map<Integer, String> necessaryParameters;
+public abstract class Action{
+    public String sourceString;
+    public String resultString;
+    public String sourceStringPath;
+    public String resultStringPath;
+    public String compareStringPath;
+    public Path sourcePath;
+    public Path resultPath;
+    public int key;
+    public String keyString;
+    public Action action;
+    public String currentABC;
+    public Map<Integer, String> necessaryParameters;
+    private boolean isInitialized;
     public Action() {
     }
 
-    public String getSourceString() {
-        return sourceString;
+    public Map<Integer, String> getNecessaryParameters() {
+        return necessaryParameters;
+    }
+
+    public String getSourceStringPath() {
+        return sourceStringPath;
+    }
+
+    public boolean isInitialized() {
+        return isInitialized;
     }
 
     public String getResultString() {
@@ -89,7 +101,6 @@ public class Action {
     }
 
     String buildResultString(){
-        String sourceString = getSourceString();
         StringBuilder resultBuilder = new StringBuilder();
         for (int i = 0; i < sourceString.length(); i++) {
 
@@ -100,6 +111,11 @@ public class Action {
         resultString = resultBuilder.toString();
         return resultString;
     }
+
+    private String getSourceString() {
+        return sourceString;
+    }
+
     public HashMap<Integer, Values> getRegularity() {
         return getRegularity(this);
     }
@@ -126,7 +142,7 @@ public class Action {
         }
 
         Optional<Integer> opt = temp.values().
-                stream().max( (e1,e2) -> e1 -e2);
+                stream().max(Comparator.comparingInt(e -> e));
         int mostTimes;
 
         if (opt.isPresent())
@@ -142,13 +158,13 @@ public class Action {
                         Map.Entry::getValue)); // all options where count characters more finalMostTimes - 1
     }
     protected Result initParameters(String[] parameters) throws IllegalAccessException {
-        if (parameters.length==0)
+        if (parameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
         AtomicReference<Result> result = null;
         Class<? extends Action> currentClass = this.getClass();
         Field fieldParameters;
         try {
-            fieldParameters = currentClass.getDeclaredField("necessaryParameters");
+            fieldParameters = currentClass.getField("necessaryParameters");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -158,17 +174,18 @@ public class Action {
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
                     try {
-                        if (parameters.length - 1 < e.getKey()) {
+                        if (e.getKey() < parameters.length -1) {
                             String currectParameter = parameters[e.getKey()];
-                            Field parameterInClass = currentClass.getDeclaredField(currectParameter);
-                            nameField.set(parameterInClass.getName());
-                            Class<?> classParameter = parameterInClass.getType();
-                            Class<Integer> integerClass = Integer.class;
+                            if (!currectParameter.isEmpty()) {
+                                Field parameterInClass = currentClass.getDeclaredField(e.getValue());
+                                nameField.set(parameterInClass.getName());
+                                Class<?> classParameter = parameterInClass.getType();
 
-                            if (classParameter.equals(integerClass))
-                                parameterInClass.set(this, Integer.parseInt(currectParameter));
-                            else if (classParameter.equals(String.class))
-                                parameterInClass.set(this, currectParameter);
+                                if (classParameter.equals(Integer.class))
+                                    parameterInClass.set(this, Integer.parseInt(currectParameter));
+                                else if (classParameter.equals(String.class))
+                                    parameterInClass.set(this, currectParameter);
+                            }
                         }
                     } catch (IllegalAccessException | NoSuchFieldException ex) {
                         result.set(new Result(ResultCode.ERROR, "error access field " + fieldParameters.toString()));
@@ -180,13 +197,20 @@ public class Action {
             sourcePath = Path.of(InputOutput.getRoot() + sourceString);
         if (resultString != null)
             resultPath = Path.of(InputOutput.getRoot() + resultString);
-        buildABC();
-
         try {
             sourceString = String.valueOf(Files.readAllLines(sourcePath));
         } catch (IOException e) {
             return new Result(ResultCode.ERROR, "error reading source file " + sourcePath.toString());
         }
+        isInitialized = true;
         return new Result(ResultCode.OK);
+    }
+
+
+    public abstract Result execute(String[] parameters) throws IOException, IllegalAccessException;
+    public abstract void setDefaultParameters();
+
+    public void setInitialization(boolean isInitialized) {
+        this.isInitialized = isInitialized;
     }
 }

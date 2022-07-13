@@ -12,11 +12,20 @@ import java.util.stream.Collectors;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.scanner;
 
-public class BrootForce extends Action implements Executer {
-    private final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
-            2,  "resultString");
+public class BrootForce extends Action{
+//    public final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
+//            2,  "resultString");
+
+    @Override
+    public void setDefaultParameters() {
+        necessaryParameters = Map.of(1, "sourceString",
+                2,  "resultString");
+        sourceString = "decoded.txt";
+        resultString = "encoded.txt";
+        key = 0;
+    }
     public BrootForce() {
-        super();
+        setDefaultParameters();
     }
 
     @Override

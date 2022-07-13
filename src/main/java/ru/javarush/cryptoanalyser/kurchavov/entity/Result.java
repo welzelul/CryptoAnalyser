@@ -1,5 +1,10 @@
 package ru.javarush.cryptoanalyser.kurchavov.entity;
 
+import ru.javarush.cryptoanalyser.kurchavov.constants.Colors;
+
+import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.ANSI_GREEN;
+import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.ANSI_RED;
+
 public class Result {
     private final ResultCode resultCode;
     private final String message;
@@ -26,5 +31,11 @@ public class Result {
     public Result(ResultCode resultCode, String message) {
         this.resultCode = resultCode;
         this.message = message;
+    }
+
+    public static void echoResult(Result result){
+        String colorText = result.resultCode == ResultCode.OK ? ANSI_GREEN : ANSI_RED;
+        System.out.println(colorText + "Result: " + result.resultCode.toString());
+        System.out.println(colorText + "\t" + result.message);
     }
 }

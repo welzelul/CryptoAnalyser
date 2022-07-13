@@ -10,21 +10,31 @@ import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.enterInt;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.questionSaveStringYesNo;
 
-public class Analyse extends Action implements Executer {
-    private final Map<Integer, String> necessaryParameters = Map.of(1, "sourceStringPath",
-            2,  "resultStringPath",
-            3, "compareStringPath");
+public class Analyse extends Action{
+//    public Map<Integer, String> necessaryParameters = Map.of(1, "sourceStringPath",
+//            2,  "resultStringPath",
+//            3, "compareStringPath");
+    @Override
+    public void setDefaultParameters() {
+        necessaryParameters = Map.of(1, "sourceStringPath",
+                2,  "resultPathString",
+                3, "compareStringPath");
+        sourceStringPath = "decoded.txt";
+        resultStringPath = "encoded.txt";
+        compareStringPath = "compareFile.txt";
+        key = 0;
+    }
 
     String compareString;
     Path comparePath;
     public Analyse() {
-        super();
+        setDefaultParameters();
     }
 
     @Override
     public Result execute(String[] parameters) throws IllegalAccessException {
         initParameters(parameters);
-        Action fileForComparing = new Action();
+        Action fileForComparing = new Encoder();
         fileForComparing.setSourceString(compareString);
         Map<Character, Integer> mapNoNCrypto = returnMapTopCharasters(fileForComparing);
         Map<Character, Integer> mapCrypto = returnMapTopCharasters(this);

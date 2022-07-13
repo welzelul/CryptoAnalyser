@@ -8,11 +8,24 @@ import java.util.Map;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.writeFile;
 
-public class Decoder extends Action implements Executer {
-    private final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
-            2,  "resultString",
-            3, "key");
+public class Decoder extends Action {
+//    public Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
+//            2,  "resultString",
+//            3, "key");
 
+    public Decoder() {
+        setDefaultParameters();
+    }
+
+    @Override
+    public void setDefaultParameters() {
+        necessaryParameters = Map.of(1, "sourceString",
+                2,  "resultString",
+                3, "key");
+        sourceString = "encoded.txt";
+        resultString = "decoded.txt";
+        key = 0;
+    }
     @Override
     public Result execute(String[] parameters) throws IOException, IllegalAccessException {
         initParameters(parameters);

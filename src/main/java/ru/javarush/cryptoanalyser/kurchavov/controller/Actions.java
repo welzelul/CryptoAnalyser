@@ -7,20 +7,32 @@ public enum Actions {
     DECODE(new Decoder()),
     BROOTFORCE(new BrootForce()),
     ANALYSE(new Analyse());
-    private final Executer action;
+    private final Action action;
     public final int count;
 
-    Actions(Executer action) {
+    Actions(Action action) {
         count = this.ordinal();
         this.action = action;
     }
-    public static Executer getOperationByOrdinal(int ordinal){
-        if (ordinal>Actions.values().length-1)
-            throw new ArrayIndexOutOfBoundsException();
-        return Actions.values()[ordinal].action;
+
+    public Action getAction() {
+        return action;
     }
 
-    public static Executer find(String command) {
+    public static Actions getEnumByOrdinal(int ordinal){
+        Actions result;
+        try{
+            result = Actions.values()[ordinal];
+        }catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+        return result;
+    }
+
+    public static Action getActionByName(String name) {
+        return Actions.valueOf(name.toUpperCase()).action;
+    }
+    public static Action find(String command) {
         return Actions.valueOf(command.toUpperCase()).action;
     }
 }
