@@ -2,26 +2,23 @@ package ru.javarush.cryptoanalyser.kurchavov.commands;
 
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
-import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.enterInt;
-import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.questionSaveStringYesNo;
+import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.*;
 
 public class Analyse extends Action{
-//    public Map<Integer, String> necessaryParameters = Map.of(1, "sourceStringPath",
-//            2,  "resultStringPath",
-//            3, "compareStringPath");
     @Override
     public void setDefaultParameters() {
-        necessaryParameters = Map.of(1, "sourceStringPath",
-                2,  "resultPathString",
-                3, "compareStringPath");
-        sourceStringPath = "decoded.txt";
-        resultStringPath = "encoded.txt";
-        compareStringPath = "compareFile.txt";
+        necessaryParameters = Map.of(1, "sourcePathAsString",
+                2,  "resultPathAsString",
+                3, "dictPathAsString");
+        sourcePathAsString = "decrypted.txt";
+        resultPathAsString = "encrypted.txt";
+        dictPathAsString = "dict.txt";
         key = 0;
     }
 
@@ -32,7 +29,8 @@ public class Analyse extends Action{
     }
 
     @Override
-    public Result execute(String[] parameters) throws IllegalAccessException {
+    public Result execute(String[] parameters) throws IOException, IllegalAccessException {
+        //TODO must do remake
         initParameters(parameters);
         Action fileForComparing = new Encoder();
         fileForComparing.setSourceString(compareString);
@@ -74,8 +72,8 @@ public class Analyse extends Action{
         }
 
         buildABC(key);
-        resultString = getResultString();
-        throw new UnsupportedOperationException();
+        String resultString = getResultString();
+        return writeFile(this.getResultPath(), resultString);
     }
 
     @Override

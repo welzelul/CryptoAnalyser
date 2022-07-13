@@ -16,9 +16,13 @@ public class InputOutput {
         return root + File.separator + "text" + File.separator;
     }
 
-    public static Result writeFile(Path path, String stringForWrite) throws IOException {
-        Files.writeString(path, stringForWrite);
-        return new Result(ResultCode.OK, "Success");
+    public static Result writeFile(Path path, String stringForWrite) {
+        try{
+            Files.writeString(path, stringForWrite);
+        } catch (IOException e){
+            return new Result(ResultCode.ERROR, e.getMessage());
+        }
+        return new Result(ResultCode.OK, "Success writing" + path);
     }
 
     public static int enterInt(String subject) {
@@ -39,5 +43,6 @@ public class InputOutput {
         System.out.println("Save finding string?(y/n):");
         return scanner.nextLine();
     }
+
 
 }

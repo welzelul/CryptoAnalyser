@@ -11,18 +11,15 @@ import java.util.stream.Collectors;
 
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.scanner;
+import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.writeFile;
 
 public class BrootForce extends Action{
-//    public final Map<Integer, String> necessaryParameters = Map.of(1, "sourceString",
-//            2,  "resultString");
-
     @Override
     public void setDefaultParameters() {
-        necessaryParameters = Map.of(1, "sourceString",
-                2,  "resultString");
-        sourceString = "decoded.txt";
-        resultString = "encoded.txt";
-        key = 0;
+        sourcePathAsString = "encrypted.txt";
+        resultPathAsString = "brutforced.txt";
+        necessaryParameters = Map.of(1, "sourcePathAsString",
+                2,  "resultPathAsString");
     }
     public BrootForce() {
         setDefaultParameters();
@@ -48,29 +45,31 @@ public class BrootForce extends Action{
 
         if (filtedMap.size() == 1) {
             int key = filtedMap.keySet().stream().findFirst().get(); // size == 1. at once get without check isPresent
-            this.resultString = filtedMap.get(key).getResultString();
-        } else {
-            filtedMap.forEach((k,v) -> {
-                String result = v.getResultString();
-                System.out.println("\t Ключ: " + k + ". " + result.substring(0,
-                        (result.length() > 50 ? 49 : result.length() - 1)) + "...\n");
-            });
-            while (true) {
-                System.out.println("Введите номер ключа, результат которого хотите сохранить: ");
-                try {
-                    int number = Integer.parseInt(scanner.nextLine());
-                    if (number < 1 || number > filtedMap.size() || filtedMap.get(number) == null)
-                        System.out.println("Неправильный вариант. Попробуйте еще раз");
-                    else {
-                        this.resultString = filtedMap.get(number).getResultString();
-                        break;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Неправильный вариант. Попробуйте еще раз");
-                }
-            }
+            this.setResultString(filtedMap.get(key).getResultString());
+        } else if(filtedMap.size()>1){
+            int key = filtedMap.keySet().stream().findFirst().get(); //
+            this.setResultString(filtedMap.get(key).getResultString());
+//            filtedMap.forEach((k,v) -> {
+//                String result = v.getResultString();
+//                System.out.println("\t Ключ: " + k + ". " + result.substring(0,
+//                        (result.length() > 50 ? 49 : result.length() - 1)) + "...\n");
+//            });
+//            while (true) {
+//                System.out.println("Введите номер ключа, результат которого хотите сохранить: ");
+//                try {
+//                    int number = Integer.parseInt(scanner.nextLine());
+//                    if (number < 1 || number > filtedMap.size() || filtedMap.get(number) == null)
+//                        System.out.println("Неправильный вариант. Попробуйте еще раз");
+//                    else {
+//                        this.resultString = filtedMap.get(number).getResultString();
+//                        break;
+//                    }
+//                } catch (NumberFormatException e) {
+//                    System.out.println("Неправильный вариант. Попробуйте еще раз");
+//                }
+//            }
         }
-        return new Result(ResultCode.OK, "Done");
+        return writeFile(this.getResultPath(), getResultString());
     }
 
     @Override

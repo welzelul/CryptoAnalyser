@@ -16,28 +16,64 @@ import java.util.stream.Collectors;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 
 public abstract class Action{
-    public String sourceString;
-    public String resultString;
-    public String sourceStringPath;
-    public String resultStringPath;
-    public String compareStringPath;
-    public Path sourcePath;
-    public Path resultPath;
+    private String sourceString;
+    private String resultString;
+
+    private Path sourcePath;
+    private Path resultPath;
+    //Need public arguments for Reflection API. Without this modifier i dont know how it will be do TODO
+    public String sourcePathAsString;
+    public String resultPathAsString;
+    public String dictPathAsString;
     public int key;
-    public String keyString;
     public Action action;
     public String currentABC;
     public Map<Integer, String> necessaryParameters;
     private boolean isInitialized;
     public Action() {
     }
-
     public Map<Integer, String> getNecessaryParameters() {
         return necessaryParameters;
     }
 
-    public String getSourceStringPath() {
-        return sourceStringPath;
+    public void setSourcePath(Path sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public void setResultPath(Path resultPath) {
+        this.resultPath = resultPath;
+    }
+
+    public void setSourcePathAsString(String sourcePathAsString) {
+        this.sourcePathAsString = sourcePathAsString;
+    }
+
+    public void setResultPathAsString(String resultPathAsString) {
+        this.resultPathAsString = resultPathAsString;
+    }
+
+    public void setDictPathAsString(String dictPathAsString) {
+        this.dictPathAsString = dictPathAsString;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
+
+    public void setInitialized(boolean initialized) {
+        isInitialized = initialized;
+    }
+
+    public String getSourcePathAsString() {
+        return sourcePathAsString;
+    }
+
+    public String getResultPathAsString() {
+        return resultPathAsString;
+    }
+
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
     }
 
     public boolean isInitialized() {
@@ -119,7 +155,7 @@ public abstract class Action{
     public HashMap<Integer, Values> getRegularity() {
         return getRegularity(this);
     }
-    public HashMap<Integer, Values> getRegularity(Action action) { //получаем мапу вариантов, где больше всего пробелов
+    public HashMap<Integer, Values> getRegularity(Action action) { //build Map there most used letter is Space
         HashMap<Integer, Values> mapTemp = new HashMap<>();
         for (int i = 0; i < ABC.length(); i++) {
             buildABC(i);
@@ -157,8 +193,8 @@ public abstract class Action{
                 collect(Collectors.toMap(Map.Entry::getKey,
                         Map.Entry::getValue)); // all options where count characters more finalMostTimes - 1
     }
-    protected Result initParameters(String[] parameters) throws IllegalAccessException {
-        if (parameters.length == 0)
+    protected Result initParameters(String[] takedParameters) throws IllegalAccessException {
+        if (takedParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
         AtomicReference<Result> result = null;
         Class<? extends Action> currentClass = this.getClass();
@@ -174,8 +210,8 @@ public abstract class Action{
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
                     try {
-                        if (e.getKey() < parameters.length -1) {
-                            String currectParameter = parameters[e.getKey()];
+                        if (e.getKey() < takedParameters.length -1) { //false warning
+                            String currectParameter = takedParameters[e.getKey()];
                             if (!currectParameter.isEmpty()) {
                                 Field parameterInClass = currentClass.getDeclaredField(e.getValue());
                                 nameField.set(parameterInClass.getName());
@@ -191,16 +227,20 @@ public abstract class Action{
                         result.set(new Result(ResultCode.ERROR, "error access field " + fieldParameters.toString()));
                     }
                 });
-            if (result != null && result.get() != null)
+            if (result != null && result.get() != null) //false warning
                 return result.get();
-        if (sourceString != null)
-            sourcePath = Path.of(InputOutput.getRoot() + sourceString);
-        if (resultString != null)
-            resultPath = Path.of(InputOutput.getRoot() + resultString);
+        if (getSourcePathAsString() != null)
+            setSourcePath( Path.of(InputOutput.getRoot() + getSourcePathAsString()));
+        if (getResultPathAsString() != null)
+            setResultPath( Path.of(InputOutput.getRoot() + getResultPathAsString()));
+        buildABC();
         try {
-            sourceString = String.valueOf(Files.readAllLines(sourcePath));
+            String sourceString = String.valueOf(Files.readAllLines(sourcePath));
+            setSourceString(sourceString);
         } catch (IOException e) {
-            return new Result(ResultCode.ERROR, "error reading source file " + sourcePath.toString());
+            return new Result(ResultCode.ERROR, "error reading source file " + getSourcePathAsString());
+        } catch (NullPointerException e) {
+            return new Result(ResultCode.ERROR, "null source path");
         }
         isInitialized = true;
         return new Result(ResultCode.OK);
