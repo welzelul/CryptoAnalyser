@@ -14,9 +14,9 @@ import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.*;
 public class Analyse extends Action{
     @Override
     public void setDefaultParameters() {
-        necessaryParameters = Map.of(1, "sourcePathAsString",
-                2,  "resultPathAsString",
-                3, "dictPathAsString");
+        necessaryParameters = Map.of(0, "sourcePathAsString",
+                1,  "resultPathAsString",
+                2, "dictPathAsString");
         sourcePathAsString = "encrypted.txt";
         resultPathAsString = "analyzed.txt";
         dictPathAsString = "dict.txt";

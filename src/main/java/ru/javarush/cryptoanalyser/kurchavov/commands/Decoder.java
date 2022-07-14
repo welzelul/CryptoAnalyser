@@ -17,9 +17,9 @@ public class Decoder extends Action {
 
     @Override
     public void setDefaultParameters() {
-        necessaryParameters = Map.of(1, "sourcePathAsString",
-                2,  "resultPathAsString",
-                3, "key");
+        necessaryParameters = Map.of(0, "sourcePathAsString",
+                1,  "resultPathAsString",
+                2, "key");
         sourcePathAsString = "encrypted.txt";
         resultPathAsString = "decrypted.txt";
         key = 1;

@@ -245,15 +245,15 @@ public abstract class Action{
         }
         // field necessaryParameters is always Map<Integer, String>
         Map<Integer, String> mapOfParameters = (Map<Integer, String>) fieldParameters.get(this);
-        AtomicReference<String> nameField = null;
+        AtomicReference<String> nameField = new AtomicReference<>();
         mapOfParameters.entrySet().stream().
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
                     try {
-                        if (e.getKey() < takedParameters.length -1) { //false warning
-                            String currectParameter = takedParameters[e.getKey()];
+                        if (e.getKey() < takedParameters.length) { //false warning
+                            String currectParameter = takedParameters[e.getKey() ];
                             if (!currectParameter.isEmpty()) {
-                                Field parameterInClass = currentClass.getDeclaredField(e.getValue());
+                                Field parameterInClass = currentClass.getField(e.getValue());
                                 nameField.set(parameterInClass.getName());
                                 Class<?> classParameter = parameterInClass.getType();
 

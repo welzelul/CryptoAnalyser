@@ -16,8 +16,8 @@ public class BruteForce extends Action{
     public void setDefaultParameters() {
         sourcePathAsString = "encrypted.txt";
         resultPathAsString = "brutforced.txt";
-        necessaryParameters = Map.of(1, "sourcePathAsString",
-                2,  "resultPathAsString");
+        necessaryParameters = Map.of(0, "sourcePathAsString",
+                1,  "resultPathAsString");
     }
     public BruteForce() {
         setDefaultParameters();
