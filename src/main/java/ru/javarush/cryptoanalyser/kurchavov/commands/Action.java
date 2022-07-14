@@ -21,6 +21,7 @@ public abstract class Action{
 
     private Path sourcePath;
     private Path resultPath;
+    private Path dictPath;
     //Need public arguments for Reflection API. Without this modifier i dont know how it will be do TODO
     public String sourcePathAsString;
     public String resultPathAsString;
@@ -29,7 +30,7 @@ public abstract class Action{
     public Action action;
     public String currentABC;
     public Map<Integer, String> necessaryParameters;
-    private boolean isInitialized;
+    private boolean Initialized;
     public Action() {
     }
     public Map<Integer, String> getNecessaryParameters() {
@@ -61,7 +62,7 @@ public abstract class Action{
     }
 
     public void setInitialized(boolean initialized) {
-        isInitialized = initialized;
+        Initialized = initialized;
     }
 
     public String getSourcePathAsString() {
@@ -77,7 +78,7 @@ public abstract class Action{
     }
 
     public boolean isInitialized() {
-        return isInitialized;
+        return Initialized;
     }
 
     public String getResultString() {
@@ -123,18 +124,13 @@ public abstract class Action{
         if (isUpperCase)
             ch = Character.toLowerCase(ch);
 
-        char resultChar = this.getCharFromAlphabet(ch);
+        char resultChar = getCharFromAlphabet(ch);
         if (isUpperCase)
             resultChar = Character.toUpperCase(resultChar);
         return resultChar;
     }
 
-    char getCharFromAlphabet(char ch) {
-        int indexFromAlphabet = ABC.indexOf(ch);
-        if (indexFromAlphabet == -1)
-            return ch;
-        return currentABC.charAt(indexFromAlphabet);
-    }
+    abstract char getCharFromAlphabet(char ch); // may be different in each operation
 
     String buildResultString(){
         StringBuilder resultBuilder = new StringBuilder();
@@ -150,7 +146,7 @@ public abstract class Action{
 
     public void readSourceFile() throws IOException {
         if (!sourcePathAsString.isEmpty()){
-            sourceString = String.valueOf(Files.readAllLines(sourcePath));
+            sourceString = Files.readString(sourcePath);
         }
     }
     public String getSourceString() {
@@ -171,57 +167,40 @@ public abstract class Action{
         }
         return mapTemp;
     }
-    public static Map<Character, Integer> returnMapTopCharasters(Action action) {
-        HashMap<Character, Integer> temp = new HashMap<>();
-        List<Character> regs = Arrays.asList('(', ')', '[', ']', '{', '{', '\\', '^','$','|','?', '*', '+', '.', '<', '>', '-', '=', '!');
-        String s = action.getSourceString().toLowerCase();
-        for (int i = 0; i < ABC.length(); i++) {
-            Character currectCh = ABC.charAt(i);
-            String toReplace = (regs.contains(currectCh) ?"\\\\":"") + currectCh;
-            String tempS = s.replaceAll(toReplace, "");
-            int countLetters = action.getSourceString().length()-tempS.length();
-            temp.put(currectCh, countLetters);
-        }
-
-        Optional<Integer> opt = temp.values().
-                stream().max(Comparator.comparingInt(e -> e));
-        int mostTimes;
-
-        if (opt.isPresent())
-            mostTimes = opt.get(); // max most times character
-        else
-            return temp;
-
-        int finalMostTimes = mostTimes;
-
-        return temp.entrySet().
-                stream().filter(x -> x.getValue()> finalMostTimes - 1).
-                collect(Collectors.toMap(Map.Entry::getKey,
-                        Map.Entry::getValue)); // all options where count characters more finalMostTimes - 1
-    }
-
     public HashMap<Character, Double> MapOfStatisticsLetters() {
         HashMap<Character, Double> temp = new HashMap<>();
-        String sourceString = getSourceString();
+        String sourceString = getSourceString().toLowerCase();
         int totalLetters = sourceString.length();
         List<Character> regs = Arrays.asList('(', ')', '[', ']', '{', '{', '\\', '^','$','|','?', '*', '+', '.', '<', '>', '-', '=', '!');
 
-        Set<Character> chars = sourceString.toLowerCase().
+        Set<Character> chars = sourceString.
                 chars().mapToObj(e -> (char)e).
                 collect(Collectors.toSet());
         chars.forEach( currectCh ->{
-            String toReplace = (regs.contains(currectCh) ?"\\\\":"") + currectCh;
+            String toReplace = (regs.contains(currectCh) ?"\\":"") + currectCh;
             String tempS = sourceString.replaceAll(toReplace, "");
-            Double percentLetter = (double) ((action.getSourceString().length() - tempS.length()) / totalLetters);
+            Double percentLetter = ((double) ((getSourceString().length() - tempS.length())) / totalLetters);
             temp.put(currectCh, percentLetter);
         });
         return temp;
     }
 
+    public String getDictPathAsString() {
+        return dictPathAsString;
+    }
+
+    public void setDictPath(Path dictPath) {
+        this.dictPath = dictPath;
+    }
+
+    public Path getDictPath() {
+        return dictPath;
+    }
+
     protected Result initParameters(String[] takedParameters) throws IllegalAccessException {
         if (takedParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
-        AtomicReference<Result> result = null;
+        AtomicReference<Result> result = new AtomicReference<>();
         Class<? extends Action> currentClass = this.getClass();
         Field fieldParameters;
         try {
@@ -229,6 +208,7 @@ public abstract class Action{
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+        // field necessaryParameters is always Map<Integer, String>
         Map<Integer, String> mapOfParameters = (Map<Integer, String>) fieldParameters.get(this);
         AtomicReference<String> nameField = null;
         mapOfParameters.entrySet().stream().
@@ -252,22 +232,27 @@ public abstract class Action{
                         result.set(new Result(ResultCode.ERROR, "error access field " + fieldParameters.toString()));
                     }
                 });
-            if (result != null && result.get() != null) //false warning
+            if (result.get() != null) //false warning
                 return result.get();
+
+            //TODO must be refactor on reclection
         if (getSourcePathAsString() != null)
             setSourcePath( Path.of(InputOutput.getRoot() + getSourcePathAsString()));
         if (getResultPathAsString() != null)
             setResultPath( Path.of(InputOutput.getRoot() + getResultPathAsString()));
+        if (getDictPathAsString() != null)
+            setDictPath( Path.of(InputOutput.getRoot() + getDictPathAsString()));
+
         buildABC();
         try {
-            String sourceString = String.valueOf(Files.readAllLines(sourcePath));
+            String sourceString = Files.readString(sourcePath);
             setSourceString(sourceString);
         } catch (IOException e) {
             return new Result(ResultCode.ERROR, "error reading source file " + getSourcePathAsString());
         } catch (NullPointerException e) {
             return new Result(ResultCode.ERROR, "null source path");
         }
-        isInitialized = true;
+        Initialized = true;
         return new Result(ResultCode.OK);
     }
 
@@ -276,6 +261,6 @@ public abstract class Action{
     public abstract void setDefaultParameters();
 
     public void setInitialization(boolean isInitialized) {
-        this.isInitialized = isInitialized;
+        this.Initialized = isInitialized;
     }
 }

@@ -5,7 +5,7 @@ import ru.javarush.cryptoanalyser.kurchavov.commands.*;
 public enum Actions {
     ENCODE(new Encoder()),
     DECODE(new Decoder()),
-    BROOTFORCE(new BrootForce()),
+    BRUTEFORCE(new BruteForce()),
     ANALYSE(new Analyse());
     private final Action action;
     public final int count;

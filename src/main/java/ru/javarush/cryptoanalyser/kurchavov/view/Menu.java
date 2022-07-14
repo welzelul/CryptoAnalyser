@@ -10,14 +10,30 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.*;
+import static ru.javarush.cryptoanalyser.kurchavov.entity.Result.echoResult;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.scanner;
 
 public class Menu {
+
+    public String[] getArgs(){
+        String[] args = new String[0];
+        String operationName = enterStringOperation();
+
+        if (operationName == null)
+            echoResult(new Result(ResultCode.ERROR,"empty operation"));
+        else
+            args = enterParameters(operationName);
+
+        if (args.length == 0)
+            echoResult(new Result(ResultCode.ERROR,"empty parameters"));
+
+        return args;
+    }
     public Action initOperation() {
         Action operation = selectOperation();
-        AtomicReference<Result> result = null;
+        AtomicReference<Result> result = new AtomicReference<>();
         Class<? extends Action> currentClass = operation.getClass();
-        AtomicReference<String> nameField = null;
+        AtomicReference<String> nameField = new AtomicReference<>();
         operation.necessaryParameters.entrySet().stream().
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
@@ -40,7 +56,7 @@ public class Menu {
                         //TODO заглушка
                     }
                 });
-        if (result != null && result.get() != null)
+        if (result.get() != null)
             return null;
         operation.setInitialization(true);
         return operation;
@@ -52,26 +68,34 @@ public class Menu {
         int option = Integer.parseInt(scanner.nextLine());
         Action action;
         try {
-            action = Actions.getEnumByOrdinal(option).getAction();
+            action = Actions.getEnumByOrdinal(option).getAction(); //we will catch possible exception
         }catch (NullPointerException e){
             action = null;
         }
         return action;
     }
-    public String enterStringOperation(){
+    public String enterStringOperation (){
         System.out.println(ANSI_GREEN + "Enter type of operation:" + ANSI_RESET);
         Arrays.stream(Actions.values()).
-                forEach(e -> System.out.printf(ANSI_WHITE + "\t %d. %s \n" + ANSI_RESET, e.ordinal(), e));
-        int option = Integer.parseInt(scanner.nextLine());
-        Actions action = Actions.getEnumByOrdinal(option);
-        return action != null ? action.name() : null;
+                forEach(e -> System.out.printf(ANSI_WHITE + "\t %d. %s \n" + ANSI_RESET, e.ordinal() + 1, e));
+        try{
+            int option = Integer.parseInt(scanner.nextLine()) - 1;
+            Actions action = Actions.getEnumByOrdinal(option);
+            return action != null ? action.name() : null;
+        }catch (NumberFormatException exception) {
+            return null;
+        }
     }
     public Action enterOperation(String message){
         System.out.println(ANSI_GREEN + "Enter type of operation: " + ANSI_RESET);
         Arrays.stream(Actions.values()).
                 forEach(e -> System.out.printf(ANSI_WHITE + "\t %d. %s" + ANSI_RESET,e.ordinal(), e));
-        int option = Integer.parseInt(scanner.nextLine());
-        return Actions.getEnumByOrdinal(option).getAction();
+        try{
+            int option = Integer.parseInt(scanner.nextLine());
+            return Actions.getEnumByOrdinal(option).getAction(); //we will catch possible exception
+        }catch (NumberFormatException exception) {
+            return null;
+        }
     }
     public int enterIntParameter(String message){
         System.out.println(ANSI_GREEN + message + ANSI_RESET);
@@ -85,7 +109,7 @@ public class Menu {
     }
     public String[] enterParameters(String operationName) {
         Action operation = Actions.valueOf(operationName).getAction();
-        AtomicReference<Result> result = null;
+        AtomicReference<Result> result = new AtomicReference<>();
         Class<? extends Action> currentClass = operation.getClass();
         AtomicReference<String> nameField = new AtomicReference<>();
         List<String> listParameters = new ArrayList<>();
@@ -102,9 +126,9 @@ public class Menu {
 //                        result.set(new Result(ResultCode.ERROR, "error access field " + nameField.get()));
                     }
                 });
-        if (result != null && result.get() != null)
+        if (result.get() != null)
             return null;
         listParameters.add(0, operationName);
-        return listParameters.toArray(new String[listParameters.size()]);
+        return listParameters.toArray(new String[0]);
     }
 }

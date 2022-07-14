@@ -3,7 +3,6 @@ package ru.javarush.cryptoanalyser.kurchavov;
 import ru.javarush.cryptoanalyser.kurchavov.app.Application;
 import ru.javarush.cryptoanalyser.kurchavov.controller.MainController;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
-import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
 import ru.javarush.cryptoanalyser.kurchavov.view.Menu;
 
 import java.io.IOException;
@@ -17,12 +16,7 @@ public class Runner {
 
         if (args.length == 0) {
             Menu menu = new Menu();
-            String operationName = menu.enterStringOperation();
-            if (operationName == null)
-                echoResult(new Result(ResultCode.ERROR,"empty operation"));
-            args = menu.enterParameters(operationName);
-            if (args == null)
-                echoResult(new Result(ResultCode.ERROR,"empty parameters"));
+            args = menu.getArgs();
         }
 
         if (args.length!=0) {

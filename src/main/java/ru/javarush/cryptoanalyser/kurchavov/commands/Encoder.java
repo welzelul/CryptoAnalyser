@@ -7,11 +7,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 import static ru.javarush.cryptoanalyser.kurchavov.util.InputOutput.writeFile;
 
 public class Encoder extends Action {
     public Encoder() {
         setDefaultParameters();
+    }
+
+    @Override
+    char getCharFromAlphabet(char ch) {
+        int indexFromAlphabet = ABC.indexOf(ch);
+        if (indexFromAlphabet == -1)
+            return ch;
+        return currentABC.charAt(indexFromAlphabet);
     }
 
     @Override

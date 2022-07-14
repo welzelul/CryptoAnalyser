@@ -35,9 +35,8 @@ public class Decoder extends Action {
         setResultString(resultString);
         return writeFile(this.getResultPath(), resultString);
     }
-
     @Override
-    public char getResultChar(char ch) {
+    public char getCharFromAlphabet(char ch) {
         int indexFromAlphabet = currentABC.indexOf(ch);
         if (indexFromAlphabet == -1)
             return ch;
