@@ -30,10 +30,9 @@ public class Analyse extends Action{
     }
 
     @Override
-    public Result execute(String[] parameters) throws IOException, IllegalAccessException {
+    public Result start() throws IOException{
         //TODO must do remake
-        initParameters(parameters);
-        Action dictForComparing = new Encoder();
+        Action dictForComparing = new Analyse();
         dictForComparing.setSourcePath(this.getDictPath());
         dictForComparing.readSourceFile();
 

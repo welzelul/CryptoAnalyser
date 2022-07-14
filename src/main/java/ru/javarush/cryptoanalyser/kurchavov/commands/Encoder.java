@@ -34,12 +34,7 @@ public class Encoder extends Action {
     }
 
     @Override
-    public Result execute(String[] parameters) throws IllegalAccessException {
-        Result initResult = null;
-        if (!isInitialized())
-            initResult = initParameters(parameters);
-        if (initResult != null && initResult.getResultCode() == ResultCode.ERROR)
-            return initResult;
+    public Result start(){
         String resultString = buildResultString();
         setResultString(resultString);
         return writeFile(this.getResultPath(), resultString);

@@ -16,7 +16,17 @@ import java.util.stream.Collectors;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 
 public abstract class Action{
-    public abstract Result execute(String[] parameters) throws IOException, IllegalAccessException; //input to the method
+    public Result execute(String[] parameters) throws IOException, IllegalAccessException //input to the method
+    {
+        Result initResult = null;
+        if (!isInitialized())
+            initResult = initParameters(parameters);
+        if (initResult != null && initResult.getResultCode() == ResultCode.ERROR)
+            return initResult;
+        return start();
+    }
+    abstract Result start() throws IOException, IllegalAccessException; //input to the method;
+
     abstract char getCharFromAlphabet(char ch); // may be different in each operation
     public abstract void setDefaultParameters(); //setting default args which need to input necessery parameters in console
     private String sourceString;
@@ -259,8 +269,11 @@ public abstract class Action{
                 });
             if (result.get() != null) //false warning
                 return result.get();
-
-            //TODO must be refactor on reclection
+        return setParametersAfterParse();
+    }
+    private Result setParametersAfterParse(){
+        //TODO must be refactor on reclection
+        buildABC();
         if (getSourcePathAsString() != null)
             setSourcePath( Path.of(InputOutput.getRoot() + getSourcePathAsString()));
         if (getResultPathAsString() != null)
@@ -280,5 +293,6 @@ public abstract class Action{
         Initialized = true;
         return new Result(ResultCode.OK);
     }
+
 
 }

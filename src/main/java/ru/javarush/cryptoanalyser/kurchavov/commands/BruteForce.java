@@ -24,10 +24,8 @@ public class BruteForce extends Action{
     }
 
     @Override
-    public Result execute(String[] parameters) throws IllegalAccessException {
+    public Result start() {
         //TODO need del logic;
-        initParameters(parameters);
-
         HashMap<Integer, Values> map = this.getRegularity();
         OptionalInt maxCountOpt = map.values().stream().
                 mapToInt(Values::getCount).
