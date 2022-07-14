@@ -16,12 +16,16 @@ import java.util.stream.Collectors;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 
 public abstract class Action{
+    public abstract Result execute(String[] parameters) throws IOException, IllegalAccessException; //input to the method
+    abstract char getCharFromAlphabet(char ch); // may be different in each operation
+    public abstract void setDefaultParameters(); //setting default args which need to input necessery parameters in console
     private String sourceString;
     private String resultString;
 
     private Path sourcePath;
     private Path resultPath;
     private Path dictPath;
+    private boolean Initialized;
     //Need public arguments for Reflection API. Without this modifier i dont know how it will be do TODO
     public String sourcePathAsString;
     public String resultPathAsString;
@@ -30,13 +34,14 @@ public abstract class Action{
     public Action action;
     public String currentABC;
     public Map<Integer, String> necessaryParameters;
-    private boolean Initialized;
     public Action() {
     }
     public Map<Integer, String> getNecessaryParameters() {
         return necessaryParameters;
     }
-
+    public String getResultString() {
+        return resultString;
+    }
     public void setSourcePath(Path sourcePath) {
         this.sourcePath = sourcePath;
     }
@@ -44,27 +49,6 @@ public abstract class Action{
     public void setResultPath(Path resultPath) {
         this.resultPath = resultPath;
     }
-
-    public void setSourcePathAsString(String sourcePathAsString) {
-        this.sourcePathAsString = sourcePathAsString;
-    }
-
-    public void setResultPathAsString(String resultPathAsString) {
-        this.resultPathAsString = resultPathAsString;
-    }
-
-    public void setDictPathAsString(String dictPathAsString) {
-        this.dictPathAsString = dictPathAsString;
-    }
-
-    public void setKey(int key) {
-        this.key = key;
-    }
-
-    public void setInitialized(boolean initialized) {
-        Initialized = initialized;
-    }
-
     public String getSourcePathAsString() {
         return sourcePathAsString;
     }
@@ -72,22 +56,6 @@ public abstract class Action{
     public String getResultPathAsString() {
         return resultPathAsString;
     }
-
-    public void setResultString(String resultString) {
-        this.resultString = resultString;
-    }
-
-    public boolean isInitialized() {
-        return Initialized;
-    }
-
-    public String getResultString() {
-        return resultString;
-    }
-    public void setSourceString(String sourceString) {
-        this.sourceString = sourceString;
-    }
-
     public Path getSourcePath() {
         return sourcePath;
     }
@@ -108,6 +76,39 @@ public abstract class Action{
         return key;
     }
 
+    public void setSourcePathAsString(String sourcePathAsString) {
+        this.sourcePathAsString = sourcePathAsString;
+    }
+
+    public void setResultPathAsString(String resultPathAsString) {
+        this.resultPathAsString = resultPathAsString;
+    }
+    public void setDictPath(Path dictPath) {
+        this.dictPath = dictPath;
+    }
+    public void setDictPathAsString(String dictPathAsString) {
+        this.dictPathAsString = dictPathAsString;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
+
+    public void setInitialized(boolean initialized) {
+        Initialized = initialized;
+    }
+
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
+    }
+
+    public void setSourceString(String sourceString) {
+        this.sourceString = sourceString;
+    }
+
+    public boolean isInitialized() {
+        return Initialized;
+    }
     void buildABC(){
         currentABC = ABC.substring(key) + ABC.substring(0, key);
     }
@@ -130,8 +131,6 @@ public abstract class Action{
         return resultChar;
     }
 
-    abstract char getCharFromAlphabet(char ch); // may be different in each operation
-
     String buildResultString(){
         StringBuilder resultBuilder = new StringBuilder();
         for (int i = 0; i < sourceString.length(); i++) {
@@ -152,12 +151,21 @@ public abstract class Action{
     public String getSourceString() {
         return sourceString;
     }
+    public String getDictPathAsString() {
+        return dictPathAsString;
+    }
 
 
-    public HashMap<Integer, Values> getRegularity() {
+    public Path getDictPath() {
+        return dictPath;
+    }
+    public void setInitialization(boolean isInitialized) {
+        this.Initialized = isInitialized;
+    }
+    HashMap<Integer, Values> getRegularity() {
         return getRegularity(this);
     }
-    public HashMap<Integer, Values> getRegularity(Action action) { //build Map there most used letter is Space
+    HashMap<Integer, Values> getRegularity(Action action) { //build Map there most used letter is Space
         HashMap<Integer, Values> mapTemp = new HashMap<>();
         for (int i = 0; i < ABC.length(); i++) {
             buildABC(i);
@@ -167,7 +175,7 @@ public abstract class Action{
         }
         return mapTemp;
     }
-    public HashMap<Character, Double> MapOfStatisticsLetters() {
+    HashMap<Character, Double> MapOfStatisticsLetters() { // Statictics of letters from String
         HashMap<Character, Double> temp = new HashMap<>();
         String sourceString = getSourceString().toLowerCase();
         int totalLetters = sourceString.length();
@@ -185,19 +193,36 @@ public abstract class Action{
         return temp;
     }
 
-    public String getDictPathAsString() {
-        return dictPathAsString;
+    String replaceCharactersWithMapABC(HashMap<Character, Character> mapCharactersToReplace) {
+        String sourceString = getSourceString();
+        StringBuilder result = new StringBuilder();
+        sourceString.chars().forEach( ch -> {
+            char nextChar = (char) ch;
+            char resultChar;
+            boolean isAlphabetic = Character.isAlphabetic(nextChar);
+            boolean isUpperCase = false;
+
+            if (isAlphabetic)
+                isUpperCase = Character.isUpperCase(nextChar);
+            if (isUpperCase)
+                nextChar = Character.toLowerCase(nextChar);
+            try{
+                resultChar = mapCharactersToReplace.get(nextChar);
+            } catch (NullPointerException ex){
+                resultChar = nextChar;
+            }
+
+            if (isUpperCase)
+                resultChar = Character.toUpperCase(resultChar);
+            result.append(resultChar);
+
+        });
+        return result.toString();
     }
 
-    public void setDictPath(Path dictPath) {
-        this.dictPath = dictPath;
-    }
 
-    public Path getDictPath() {
-        return dictPath;
-    }
 
-    protected Result initParameters(String[] takedParameters) throws IllegalAccessException {
+    protected Result initParameters(String[] takedParameters) throws IllegalAccessException { // init args using Reflection API
         if (takedParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
         AtomicReference<Result> result = new AtomicReference<>();
@@ -256,11 +281,4 @@ public abstract class Action{
         return new Result(ResultCode.OK);
     }
 
-
-    public abstract Result execute(String[] parameters) throws IOException, IllegalAccessException;
-    public abstract void setDefaultParameters();
-
-    public void setInitialization(boolean isInitialized) {
-        this.Initialized = isInitialized;
-    }
 }

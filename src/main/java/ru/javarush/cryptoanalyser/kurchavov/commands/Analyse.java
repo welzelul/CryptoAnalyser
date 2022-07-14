@@ -63,32 +63,6 @@ public class Analyse extends Action{
         return writeFile(this.getResultPath(), resultString);
     }
 
-    private String replaceCharactersWithMapABC(HashMap<Character, Character> mapCharactersToReplace) {
-        String sourceString = getSourceString();
-        StringBuilder result = new StringBuilder();
-        sourceString.chars().forEach( ch -> {
-                    char nextChar = (char) ch;
-                    char resultChar;
-                    boolean isAlphabetic = Character.isAlphabetic(nextChar);
-                    boolean isUpperCase = false;
-
-                    if (isAlphabetic)
-                        isUpperCase = Character.isUpperCase(nextChar);
-                    if (isUpperCase)
-                        nextChar = Character.toLowerCase(nextChar);
-                    try{
-                        resultChar = mapCharactersToReplace.get(nextChar);
-                    } catch (NullPointerException ex){
-                        resultChar = nextChar;
-                    }
-
-                    if (isUpperCase)
-                        resultChar = Character.toUpperCase(resultChar);
-                    result.append(resultChar);
-
-                });
-        return result.toString();
-    }
     @Override
     public char getCharFromAlphabet(char ch) {
         int indexFromAlphabet = currentABC.indexOf(ch);

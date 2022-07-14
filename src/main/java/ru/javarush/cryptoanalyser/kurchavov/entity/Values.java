@@ -1,6 +1,6 @@
 package ru.javarush.cryptoanalyser.kurchavov.entity;
 
-public class Values {
+public class Values { //use for operation BruteForce
         private final int count;
         private final String resultString;
 
