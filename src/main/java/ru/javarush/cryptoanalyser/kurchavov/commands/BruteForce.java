@@ -15,17 +15,18 @@ public class BruteForce extends Action{
     @Override
     public void setDefaultParameters() {
         sourcePathAsString = "encrypted.txt";
-        resultPathAsString = "brutforced.txt";
+        resultPathAsString = "bruteforced.txt";
         necessaryParameters = Map.of(0, "sourcePathAsString",
                 1,  "resultPathAsString");
     }
     public BruteForce() {
+
         setDefaultParameters();
     }
 
     @Override
     public Result start() {
-        //TODO need del logic;
+        //TODO
         HashMap<Integer, Values> map = this.getRegularity();
         OptionalInt maxCountOpt = map.values().stream().
                 mapToInt(Values::getCount).
@@ -39,11 +40,8 @@ public class BruteForce extends Action{
                 filter(e -> e.getValue().getCount() == finalMaxCount).
                         collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
 
-        if (filtedMap.size() == 1) {
+        if (filtedMap.size() > 0) {
             int key = filtedMap.keySet().stream().findFirst().get(); // size == 1. at once get without check isPresent
-            this.setResultString(filtedMap.get(key).getResultString());
-        } else if(filtedMap.size()>1){
-            int key = filtedMap.keySet().stream().findFirst().get(); //
             this.setResultString(filtedMap.get(key).getResultString());
 
         }

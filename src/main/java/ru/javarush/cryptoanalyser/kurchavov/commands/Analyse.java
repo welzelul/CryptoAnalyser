@@ -31,7 +31,7 @@ public class Analyse extends Action{
 
     @Override
     public Result start() throws IOException{
-        //TODO must do remake
+        //TODO must remake
         Action dictForComparing = new Analyse();
         dictForComparing.setSourcePath(this.getDictPath());
         dictForComparing.readSourceFile();

@@ -141,7 +141,7 @@ public abstract class Action{
         return resultChar;
     }
 
-    String buildResultString(){
+    String buildResultString(String sourceString){
         StringBuilder resultBuilder = new StringBuilder();
         for (int i = 0; i < sourceString.length(); i++) {
 
@@ -151,6 +151,9 @@ public abstract class Action{
         }
         resultString = resultBuilder.toString();
         return resultString;
+    }
+    String buildResultString(){
+        return buildResultString(sourceString);
     }
 
     public void readSourceFile() throws IOException {
@@ -180,6 +183,8 @@ public abstract class Action{
         for (int i = 0; i < ABC.length(); i++) {
             buildABC(i);
             String resultString = buildResultString();
+            if (resultString.length()>9999)
+                resultString = resultString.substring(0,9999);
             int counterOfLetterO = resultString.replaceAll("[^ ]", "").length();
             mapTemp.put(i, new Values(counterOfLetterO, resultString));
         }
@@ -281,7 +286,6 @@ public abstract class Action{
         if (getDictPathAsString() != null)
             setDictPath( Path.of(InputOutput.getRoot() + getDictPathAsString()));
 
-        buildABC();
         try {
             String sourceString = Files.readString(sourcePath);
             setSourceString(sourceString);
