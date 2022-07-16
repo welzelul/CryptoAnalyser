@@ -1,6 +1,7 @@
 package ru.javarush.cryptoanalyser.kurchavov.commands;
 
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
+import ru.javarush.cryptoanalyser.kurchavov.entity.ResultCode;
 import ru.javarush.cryptoanalyser.kurchavov.util.InputOutput;
 
 import java.io.IOException;
@@ -30,11 +31,15 @@ public class Analyse extends Action{
     }
 
     @Override
-    public Result start() throws IOException{
+    public Result start(){
         //TODO must remake
         Action dictForComparing = new Analyse();
         dictForComparing.setSourcePath(this.getDictPath());
-        dictForComparing.readSourceFile();
+        try {
+            dictForComparing.readSourceFile();
+        }catch (IOException e) {
+           return new Result(ResultCode.ERROR, "error reading dictionary file for this operation");
+        }
 
         HashMap<Character, Double> mapEncrypted = this.MapOfStatisticsLetters();
         HashMap<Character, Double> mapDict      = dictForComparing.MapOfStatisticsLetters();

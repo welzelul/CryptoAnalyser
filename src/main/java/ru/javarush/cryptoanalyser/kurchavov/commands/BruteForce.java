@@ -3,6 +3,7 @@ package ru.javarush.cryptoanalyser.kurchavov.commands;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Result;
 import ru.javarush.cryptoanalyser.kurchavov.entity.Values;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -25,7 +26,7 @@ public class BruteForce extends Action{
     }
 
     @Override
-    public Result start() {
+    public Result start(){
         //TODO
         HashMap<Integer, Values> map = this.getRegularity();
         OptionalInt maxCountOpt = map.values().stream().

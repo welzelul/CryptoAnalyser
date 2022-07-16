@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import static ru.javarush.cryptoanalyser.kurchavov.constants.Strings.ABC;
 
 public abstract class Action{
-    public Result execute(String[] parameters) throws IOException, IllegalAccessException //input to the method
+    public Result execute(String[] parameters) throws IOException//input to the method
     {
         Result initResult = null;
         if (!isInitialized())
@@ -25,10 +25,10 @@ public abstract class Action{
             return initResult;
         return start();
     }
-    abstract Result start() throws IOException, IllegalAccessException; //input to the method;
+    abstract Result start() throws IOException; //input to the method;
 
     abstract char getCharFromAlphabet(char ch); // may be different in each operation
-    public abstract void setDefaultParameters(); //setting default args which need to input necessery parameters in console
+    public abstract void setDefaultParameters(); //setting default args which need to input necessary parameters in console
     private String sourceString;
     private String resultString;
 
@@ -237,8 +237,8 @@ public abstract class Action{
 
 
 
-    protected Result initParameters(String[] tokkenParameters) throws IllegalAccessException { // init args using Reflection API
-        if (tokkenParameters.length == 0)
+    protected Result initParameters(String[] takenParameters) { // init args using Reflection API
+        if (takenParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
         AtomicReference<Result> result = new AtomicReference<>();
         Class<? extends Action> currentClass = this.getClass();
@@ -248,15 +248,21 @@ public abstract class Action{
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
-        // field necessaryParameters is always Map<Integer, String>
-        Map<Integer, String> mapOfParameters = (Map<Integer, String>) fieldParameters.get(this);
+        // field necessaryParameters is always Map<Integer, String>. im just learning and appling Reflection API
+        Map<Integer, String> mapOfParameters;
+        try {
+            mapOfParameters = (Map<Integer, String>) fieldParameters.get(this);
+        }catch (IllegalAccessException e){
+            return new Result(ResultCode.ERROR, "IllegalAccessException necessaryParameters");
+        }
+
         AtomicReference<String> nameField = new AtomicReference<>();
         mapOfParameters.entrySet().stream().
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
                     try {
-                        if (e.getKey() < tokkenParameters.length) { //false warning
-                            String currectParameter = tokkenParameters[e.getKey() ];
+                        if (e.getKey() < takenParameters.length) { //false warning
+                            String currectParameter = takenParameters[e.getKey() ];
                             if (!currectParameter.isEmpty()) {
                                 Field parameterInClass = currentClass.getField(e.getValue());
                                 nameField.set(parameterInClass.getName());
@@ -277,7 +283,7 @@ public abstract class Action{
         return setParametersAfterParse();
     }
     private Result setParametersAfterParse(){
-        //TODO must be refactor on reclection
+        //TODO must be refactoring on reflection API..not now
         buildABC();
         if (getSourcePathAsString() != null)
             setSourcePath( Path.of(InputOutput.getRoot() + getSourcePathAsString()));

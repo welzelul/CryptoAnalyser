@@ -25,7 +25,7 @@ public class Decoder extends Action {
         key = 1;
     }
     @Override
-    public Result start() {
+    public Result start(){
         String resultString = buildResultString();
         setResultString(resultString);
         return writeFile(this.getResultPath(), resultString);
