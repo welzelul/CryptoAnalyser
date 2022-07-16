@@ -2,8 +2,7 @@ package ru.javarush.cryptoanalyser.kurchavov.entity;
 
 import ru.javarush.cryptoanalyser.kurchavov.constants.Colors;
 
-import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.ANSI_GREEN;
-import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.ANSI_RED;
+import static ru.javarush.cryptoanalyser.kurchavov.constants.Colors.*;
 
 public class Result {
     private final ResultCode resultCode;

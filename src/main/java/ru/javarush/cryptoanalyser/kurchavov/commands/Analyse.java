@@ -45,7 +45,7 @@ public class Analyse extends Action{
         HashMap<Character, Double> mapDict      = dictForComparing.MapOfStatisticsLetters();
         HashMap<Character, Character> mapCharactersToReplace = new HashMap<>();
 
-        mapEncrypted.entrySet().stream().filter(e -> e.getValue()>0.00005). // delete insignicant letters
+        mapEncrypted.entrySet(). // delete insignicant letters
                 forEach( e -> {
                     try {
                         Optional<Map.Entry<Character, Double>> comparison =

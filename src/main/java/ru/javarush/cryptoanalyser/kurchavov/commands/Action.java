@@ -195,15 +195,18 @@ public abstract class Action{
         String sourceString = getSourceString().toLowerCase();
         int totalLetters = sourceString.length();
         List<Character> regs = Arrays.asList('(', ')', '[', ']', '{', '{', '\\', '^','$','|','?', '*', '+', '.', '<', '>', '-', '=', '!');
-
+//        List<Character> ignoredLetters = Arrays.asList('\n','\t');
+        String stringIgnoredLetters = "\n\t\r";
         Set<Character> chars = sourceString.
                 chars().mapToObj(e -> (char)e).
                 collect(Collectors.toSet());
         chars.forEach( currectCh ->{
-            String toReplace = (regs.contains(currectCh) ?"\\":"") + currectCh;
-            String tempS = sourceString.replaceAll(toReplace, "");
-            Double percentLetter = ((double) ((getSourceString().length() - tempS.length())) / totalLetters);
-            temp.put(currectCh, percentLetter);
+            if (stringIgnoredLetters.indexOf(currectCh) == -1){
+                String toReplace = (regs.contains(currectCh) ?"\\":"") + currectCh;
+                String tempS = sourceString.replaceAll(toReplace, "");
+                Double percentLetter = ((double) ((getSourceString().length() - tempS.length())) / totalLetters);
+                temp.put(currectCh, percentLetter);
+            }
         });
         return temp;
     }
