@@ -43,8 +43,9 @@ public class BruteForce extends Action{
 
         if (filtedMap.size() > 0) {
             int key = filtedMap.keySet().stream().findFirst().get(); // size == 1. at once get without check isPresent
-            this.setResultString(filtedMap.get(key).getResultString());
-
+            this.setKey(key); //again build result string. because we parsed string only 2000 length
+            buildABC();
+            this.buildResultString();
         }
         return writeFile(this.getResultPath(), getResultString());
     }
