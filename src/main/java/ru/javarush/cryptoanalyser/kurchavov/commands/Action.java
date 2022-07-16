@@ -183,8 +183,8 @@ public abstract class Action{
         for (int i = 0; i < ABC.length(); i++) {
             buildABC(i);
             String resultString = buildResultString();
-            if (resultString.length()>9999)
-                resultString = resultString.substring(0,9999);
+            if (resultString.length()>2000) // just for performance
+                resultString = resultString.substring(0, 2000);
             int counterOfLetterO = resultString.replaceAll("[^ ]", "").length();
             mapTemp.put(i, new Values(counterOfLetterO, resultString));
         }

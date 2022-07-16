@@ -70,7 +70,7 @@ public class Menu {
         try {
             action = Actions.getEnumByOrdinal(option).getAction(); //we will catch possible exception
         }catch (NullPointerException e){
-            action = null;
+            return null;
         }
         return action;
     }
@@ -92,10 +92,13 @@ public class Menu {
                 forEach(e -> System.out.printf(ANSI_WHITE + "\t %d. %s" + ANSI_RESET,e.ordinal(), e));
         try{
             int option = Integer.parseInt(scanner.nextLine());
-            return Actions.getEnumByOrdinal(option).getAction(); //we will catch possible exception
+            if (Actions.getEnumByOrdinal(option) != null) {
+                return Actions.getEnumByOrdinal(option).getAction(); //we will catch possible exception
+            }
         }catch (NumberFormatException exception) {
             return null;
         }
+        return null;
     }
     public int enterIntParameter(String message){
         System.out.println(ANSI_GREEN + message + ANSI_RESET);
@@ -120,9 +123,12 @@ public class Menu {
                         String currectParameter = e.getValue();
                         Field parameterInClass = currentClass.getField(currectParameter);
                         nameField.set(parameterInClass.getName());
+                        String defaultParameter = (String) parameterInClass.get(operation);
                         Class<?> classParameter = parameterInClass.getType();
-                        listParameters.add(enterStringParameter("Enter " + nameField.get() + " OR Press Enter by default"));
-                    } catch (NoSuchFieldException ex) {
+                        String gottenParameter = enterStringParameter("Enter " + nameField.get() +
+                                " OR press Enter to choose default value(" + defaultParameter + ")" );
+                        listParameters.add(gottenParameter);
+                    } catch (NoSuchFieldException | IllegalAccessException ex) {
 //                        result.set(new Result(ResultCode.ERROR, "error access field " + nameField.get()));
                     }
                 });
