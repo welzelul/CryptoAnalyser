@@ -123,7 +123,11 @@ public class Menu {
                         String currectParameter = e.getValue();
                         Field parameterInClass = currentClass.getField(currectParameter);
                         nameField.set(parameterInClass.getName());
-                        String defaultParameter = (String) parameterInClass.get(operation);
+                        String defaultParameter = null;
+                        if (parameterInClass.getType().equals(int.class) | parameterInClass.getType().equals(Integer.class))
+                            defaultParameter = String.valueOf(parameterInClass.get(operation));
+                        else if (parameterInClass.getType().equals(String.class))
+                            defaultParameter = (String) parameterInClass.get(operation);
                         Class<?> classParameter = parameterInClass.getType();
                         String gottenParameter = enterStringParameter("Enter " + nameField.get() +
                                 " OR press Enter to choose default value(" + defaultParameter + ")" );

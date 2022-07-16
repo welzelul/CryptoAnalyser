@@ -237,8 +237,8 @@ public abstract class Action{
 
 
 
-    protected Result initParameters(String[] takedParameters) throws IllegalAccessException { // init args using Reflection API
-        if (takedParameters.length == 0)
+    protected Result initParameters(String[] tokkenParameters) throws IllegalAccessException { // init args using Reflection API
+        if (tokkenParameters.length == 0)
             return new Result(ResultCode.ERROR, "Null arguments for init");
         AtomicReference<Result> result = new AtomicReference<>();
         Class<? extends Action> currentClass = this.getClass();
@@ -255,14 +255,14 @@ public abstract class Action{
                 sorted(Comparator.comparingInt(Map.Entry::getKey)).
                 forEach( e -> {
                     try {
-                        if (e.getKey() < takedParameters.length) { //false warning
-                            String currectParameter = takedParameters[e.getKey() ];
+                        if (e.getKey() < tokkenParameters.length) { //false warning
+                            String currectParameter = tokkenParameters[e.getKey() ];
                             if (!currectParameter.isEmpty()) {
                                 Field parameterInClass = currentClass.getField(e.getValue());
                                 nameField.set(parameterInClass.getName());
                                 Class<?> classParameter = parameterInClass.getType();
 
-                                if (classParameter.equals(Integer.class))
+                                if (classParameter.equals(Integer.class) | classParameter.equals(int.class))
                                     parameterInClass.set(this, Integer.parseInt(currectParameter));
                                 else if (classParameter.equals(String.class))
                                     parameterInClass.set(this, currectParameter);

@@ -29,8 +29,14 @@ public enum Actions {
         return result;
     }
 
-    public static Action getActionByName(String name) {
-        return Actions.valueOf(name.toUpperCase()).action;
+    public static Action getActionByName(String name) throws IllegalArgumentException{
+        Action action;
+        try{
+            action = Actions.valueOf(name.toUpperCase()).action;
+        }catch (IllegalArgumentException e){
+            action = null;
+        }
+        return action;
     }
     public static Action find(String command) {
         return Actions.valueOf(command.toUpperCase()).action;
