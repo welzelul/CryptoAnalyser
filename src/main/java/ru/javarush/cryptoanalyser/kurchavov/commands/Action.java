@@ -120,9 +120,13 @@ public abstract class Action{
         return Initialized;
     }
     void buildABC(){
-        currentABC = ABC.substring(key) + ABC.substring(0, key);
+        buildABC(key);
     }
     void buildABC(int key){
+        if (key<0)
+            return;
+        if(key>ABC.length())
+            key = key - ABC.length();
         currentABC = ABC.substring(key) + ABC.substring(0, key);
     }
 
@@ -271,8 +275,11 @@ public abstract class Action{
                                 nameField.set(parameterInClass.getName());
                                 Class<?> classParameter = parameterInClass.getType();
 
-                                if (classParameter.equals(Integer.class) | classParameter.equals(int.class))
+                                if (classParameter.equals(Integer.class) | classParameter.equals(int.class)) {
                                     parameterInClass.set(this, Integer.parseInt(currectParameter));
+                                    if ((Integer) parameterInClass.get(this)<0)
+                                        result.set(new Result(ResultCode.ERROR, "error negative number. " +nameField.get() + " may be higher or equal 0"));
+                                }
                                 else if (classParameter.equals(String.class))
                                     parameterInClass.set(this, currectParameter);
                             }

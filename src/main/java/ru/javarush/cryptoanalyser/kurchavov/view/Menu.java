@@ -42,9 +42,10 @@ public class Menu {
                         Field parameterInClass = currentClass.getDeclaredField(currectParameter);
                         nameField.set(parameterInClass.getName());
                         Class<?> classParameter = parameterInClass.getType();
-                        if (classParameter.equals(Integer.class))
+                        if (classParameter.equals(Integer.class)) {
                             parameterInClass.set(operation,
-                                    enterIntParameter("Enter " + nameField.get() + " OR Press Enter by default")) ;
+                                    enterIntParameter("Enter " + nameField.get() + " OR Press Enter by default"));
+                            }
                         else if (classParameter.equals(String.class))
                             parameterInClass.set(this,
                                     enterStringParameter("Enter " + nameField.get() + " OR Press Enter by default"));
